@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace McMatters\DbCommands;
+namespace McMatters\UserCommands;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use McMatters\UserCommands\Console\Commands\{
