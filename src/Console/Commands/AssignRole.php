@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionException;
 use RuntimeException;
 
 /**
@@ -76,7 +77,11 @@ class AssignRole extends BaseCommand
             } else {
                 $user->{$roleMethod}($role);
             }
-        } catch (\ReflectionException $e) {}
+
+            $this->info('Role successfully attached');
+        } catch (ReflectionException $e) {
+            $this->error('Something went wrong');
+        }
     }
 
     /**

@@ -38,13 +38,12 @@ class UpdatePassword extends BaseCommand
         $config = $this->getConfig();
         $user = $this->getUser($config);
 
-        $user->setAttribute(
-            array_get($config, 'columns.password', 'password'),
-            array_get($config, 'password.need_hash', false)
-                ? $this->crypt($password)
-                : $password
-        );
-        $user->save();
+        $passwordColumn = array_get($config, 'columns.password', 'password');
+        $password = array_get($config, 'password.need_hash', false)
+            ? $this->crypt($password)
+            : $password;
+
+        $user->update([$passwordColumn => $password]);
 
         $this->info('Password successfully updated.');
     }

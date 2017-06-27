@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace McMatters\UserCommands\Console\Commands;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use RuntimeException;
 
@@ -36,21 +38,22 @@ class Sanitize extends BaseCommand
         $emailColumn = $this->getEmailColumn($config);
         $users = $this->getUsers($config);
 
-        $users->each(function ($user) use ($emailColumn, $domain) {
-            $email = $user->getAttribute($emailColumn);
-            $newEmail = preg_replace('/@(.*)$/', "@{$domain}-$1", $email);
+        $users->each(function (Collection $chunk) use ($emailColumn, $domain) {
+            $chunk->each(function (Model $user) use ($emailColumn, $domain) {
+                $email = $user->getAttribute($emailColumn);
+                $newEmail = preg_replace('/@(.*)$/', "@{$domain}-$1", $email);
 
-            $user->setAttribute($emailColumn, $newEmail);
-            $user->save();
+                $user->update([$emailColumn => $newEmail]);
+            });
         });
     }
 
     /**
      * @param array $config
      *
-     * @return Collection
+     * @return Builder
      */
-    protected function getUsers(array $config): Collection
+    protected function getUsers(array $config): Builder
     {
         $userModel = array_get($config, 'models.user');
 
@@ -62,10 +65,10 @@ class Sanitize extends BaseCommand
 
                 $query->{$scopeName}(...$scope);
             } else {
-                $query->{$scope()};
+                $query->{$scope}();
             }
         }
 
-        return $query->get();
+        return $query;
     }
 }
