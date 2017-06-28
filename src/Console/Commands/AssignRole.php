@@ -26,7 +26,7 @@ class AssignRole extends BaseCommand
     /**
      * @var string
      */
-    protected $description = 'Update role for given user';
+    protected $description = 'Assign role for given user';
 
     /**
      * @return void
