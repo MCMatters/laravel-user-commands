@@ -6,7 +6,6 @@ namespace McMatters\UserCommands\Console\Commands;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use RuntimeException;
 
 /**
@@ -38,14 +37,18 @@ class Sanitize extends BaseCommand
         $emailColumn = $this->getEmailColumn($config);
         $users = $this->getUsers($config);
 
-        $users->each(function (Collection $chunk) use ($emailColumn, $domain) {
-            $chunk->each(function (Model $user) use ($emailColumn, $domain) {
-                $email = $user->getAttribute($emailColumn);
-                $newEmail = preg_replace('/@(.*)$/', "@{$domain}-$1", $email);
+        $sanitized = 0;
 
-                $user->update([$emailColumn => $newEmail]);
-            });
+        $users->each(function (Model $user) use ($emailColumn, $domain, &$sanitized) {
+            $email = $user->getAttribute($emailColumn);
+            $newEmail = preg_replace('/@(.*)$/', "@{$domain}-$1", $email);
+
+            $user->update([$emailColumn => $newEmail]);
+
+            $sanitized++;
         });
+
+        $this->info("Successfully sanitized {$sanitized} emails");
     }
 
     /**

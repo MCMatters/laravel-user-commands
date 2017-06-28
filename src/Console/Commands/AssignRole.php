@@ -58,7 +58,7 @@ class AssignRole extends BaseCommand
         try {
             $reflection = new ReflectionClass(new $user);
 
-            if (!$reflection->hasMethod($roleMethod)) {
+            if (null === $roleMethod || !$reflection->hasMethod($roleMethod)) {
                 $relation = null;
 
                 if ($reflection->hasMethod('roles')) {
