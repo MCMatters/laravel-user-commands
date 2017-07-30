@@ -6,6 +6,7 @@ namespace McMatters\UserCommands\Console\Commands;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use RuntimeException;
 
 /**
@@ -58,11 +59,11 @@ class Sanitize extends BaseCommand
      */
     protected function getUsers(array $config): Builder
     {
-        $userModel = array_get($config, 'models.user');
+        $userModel = Arr::get($config, 'models.user');
 
         $query = $userModel::query();
 
-        foreach ((array) array_get($config, 'sanitize.scopes', []) as $scope) {
+        foreach ((array) Arr::get($config, 'sanitize.scopes', []) as $scope) {
             if (is_array($scope)) {
                 $scopeName = array_shift($scope);
 

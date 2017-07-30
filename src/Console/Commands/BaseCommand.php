@@ -7,6 +7,8 @@ namespace McMatters\UserCommands\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -23,7 +25,7 @@ abstract class BaseCommand extends Command
      */
     protected function getConfig(): array
     {
-        $config = config('user-commands');
+        $config = Config::get('user-commands');
 
         $this->checkUserModel($config);
 
@@ -37,7 +39,7 @@ abstract class BaseCommand extends Command
      */
     protected function getUserModel(array $config): string
     {
-        return array_get($config, 'models.user');
+        return Arr::get($config, 'models.user');
     }
 
     /**
@@ -47,7 +49,7 @@ abstract class BaseCommand extends Command
      */
     protected function getIdColumn(array $config): string
     {
-        return array_get($config, 'columns.id', 'id');
+        return Arr::get($config, 'columns.id', 'id');
     }
 
     /**
@@ -57,7 +59,7 @@ abstract class BaseCommand extends Command
      */
     protected function getEmailColumn(array $config): string
     {
-        return array_get($config, 'columns.email', 'email');
+        return Arr::get($config, 'columns.email', 'email');
     }
 
     /**
@@ -73,10 +75,10 @@ abstract class BaseCommand extends Command
 
         $userModel = $this->getUserModel($config);
         $emailColumn = $this->getEmailColumn($config);
-        $nameColumn = array_get($config, 'columns.name');
+        $nameColumn = Arr::get($config, 'columns.name');
 
         return $userModel::query()
-            ->where(array_get($config, 'columns.id', 'id'), '=', $identity)
+            ->where(Arr::get($config, 'columns.id', 'id'), '=', $identity)
             ->when(null !== $emailColumn, function ($q) use ($identity, $emailColumn) {
                 $q->orWhere($emailColumn, '=', $identity);
             })

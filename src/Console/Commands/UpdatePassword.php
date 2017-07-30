@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace McMatters\UserCommands\Console\Commands;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -38,8 +39,8 @@ class UpdatePassword extends BaseCommand
         $config = $this->getConfig();
         $user = $this->getUser($config);
 
-        $passwordColumn = array_get($config, 'columns.password', 'password');
-        $password = array_get($config, 'password.need_hash', false)
+        $passwordColumn = Arr::get($config, 'columns.password', 'password');
+        $password = Arr::get($config, 'password.need_hash', false)
             ? $this->crypt($password)
             : $password;
 
@@ -55,10 +56,6 @@ class UpdatePassword extends BaseCommand
      */
     protected function crypt(string $password): string
     {
-        if (function_exists('bcrypt')) {
-            return bcrypt($password);
-        }
-
-        return app('hash')->make($password, []);
+        return $this->getLaravel()->make('hash')->make($password, []);
     }
 }

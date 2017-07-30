@@ -24,7 +24,7 @@ class ServiceProvider extends BaseServiceProvider
         $configPath = __DIR__.'/../config/user-commands.php';
 
         $this->publishes([
-            $configPath => $this->configPath('user-commands.php'),
+            $configPath => $this->app->configPath().'/user-commands.php',
         ], 'config');
 
         $this->mergeConfigFrom($configPath, 'user-commands');
@@ -50,19 +50,5 @@ class ServiceProvider extends BaseServiceProvider
             'command.user.sanitize',
             'command.user.update-password',
         ]);
-    }
-
-    /**
-     * @param string $file
-     *
-     * @return string
-     */
-    protected function configPath(string $file): string
-    {
-        if (function_exists('config_path')) {
-            return config_path($file);
-        }
-
-        return base_path("config/{$file}");
     }
 }

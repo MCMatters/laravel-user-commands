@@ -6,6 +6,7 @@ namespace McMatters\UserCommands\Console\Commands;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
@@ -53,7 +54,7 @@ class AssignRole extends BaseCommand
      */
     protected function attachRole(Model $user, Model $role, array $config)
     {
-        $roleMethod = array_get($config, 'update_password.attach_method');
+        $roleMethod = Arr::get($config, 'update_password.attach_method');
 
         try {
             $reflection = new ReflectionClass(new $user);
@@ -95,8 +96,8 @@ class AssignRole extends BaseCommand
         $this->checkRoleModel($config);
 
         $identity = $this->argument('role');
-        $roleModel = array_get($config, 'models.role');
-        $identifiers = (array) array_get(
+        $roleModel = Arr::get($config, 'models.role');
+        $identifiers = (array) Arr::get(
             $config,
             'update_password.role_identifiers',
             ['id']
