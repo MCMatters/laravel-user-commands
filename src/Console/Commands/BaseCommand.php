@@ -6,11 +6,13 @@ namespace McMatters\UserCommands\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
 use RuntimeException;
+
+use function class_exists;
+
+use const null;
 
 /**
  * Class BaseCommand
@@ -21,7 +23,8 @@ abstract class BaseCommand extends Command
 {
     /**
      * @return array
-     * @throws RuntimeException
+     *
+     * @throws \RuntimeException
      */
     protected function getConfig(): array
     {
@@ -65,9 +68,10 @@ abstract class BaseCommand extends Command
     /**
      * @param array $config
      *
-     * @return Model
-     * @throws InvalidArgumentException
-     * @throws ModelNotFoundException
+     * @return \Illuminate\Database\Eloquent\Model
+     *
+     * @throws \InvalidArgumentException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
     protected function getUser(array $config): Model
     {
@@ -78,12 +82,12 @@ abstract class BaseCommand extends Command
         $nameColumn = Arr::get($config, 'columns.name');
 
         return $userModel::query()
-            ->where(Arr::get($config, 'columns.id', 'id'), '=', $identity)
+            ->where(Arr::get($config, 'columns.id', 'id'), $identity)
             ->when(null !== $emailColumn, function ($q) use ($identity, $emailColumn) {
-                $q->orWhere($emailColumn, '=', $identity);
+                $q->orWhere($emailColumn, $identity);
             })
             ->when(null !== $nameColumn, function ($q) use ($identity, $nameColumn) {
-                $q->orWhere($nameColumn, '=', $identity);
+                $q->orWhere($nameColumn, $identity);
             })
             ->firstOrFail();
     }
@@ -91,7 +95,7 @@ abstract class BaseCommand extends Command
     /**
      * @param array $config
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     protected function checkUserModel(array $config)
     {

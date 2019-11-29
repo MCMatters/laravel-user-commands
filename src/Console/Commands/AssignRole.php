@@ -5,12 +5,14 @@ declare(strict_types = 1);
 namespace McMatters\UserCommands\Console\Commands;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 use RuntimeException;
+
+use function class_exists;
+
+use const null;
 
 /**
  * Class AssignRole
@@ -31,9 +33,10 @@ class AssignRole extends BaseCommand
 
     /**
      * @return void
-     * @throws ModelNotFoundException
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function handle()
     {
@@ -46,18 +49,20 @@ class AssignRole extends BaseCommand
     }
 
     /**
-     * @param Model $user
-     * @param Model $role
+     * @param \Illuminate\Database\Eloquent\Model $user
+     * @param \Illuminate\Database\Eloquent\Model $role
      * @param array $config
      *
-     * @throws RuntimeException
+     * @return void
+     *
+     * @throws \RuntimeException
      */
     protected function attachRole(Model $user, Model $role, array $config)
     {
         $roleMethod = Arr::get($config, 'update_password.attach_method');
 
         try {
-            $reflection = new ReflectionClass(new $user);
+            $reflection = new ReflectionClass(new $user());
 
             if (null === $roleMethod || !$reflection->hasMethod($roleMethod)) {
                 $relation = null;
@@ -88,8 +93,10 @@ class AssignRole extends BaseCommand
     /**
      * @param array $config
      *
-     * @return Model
-     * @throws RuntimeException
+     * @return \Illuminate\Database\Eloquent\Model
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \RuntimeException
      */
     protected function getRole(array $config): Model
     {
@@ -97,16 +104,13 @@ class AssignRole extends BaseCommand
 
         $identity = $this->argument('role');
         $roleModel = Arr::get($config, 'models.role');
-        $identifiers = (array) Arr::get(
-            $config,
-            'update_password.role_identifiers',
-            ['id']
-        );
+        $identifiers = Arr::get($config, 'update_password.role_identifiers', ['id']);
 
+        /** @var \Illuminate\Database\Eloquent\Builder $query */
         $query = $roleModel::query();
 
-        foreach ($identifiers as $identifier) {
-            $query->orWhere($identifier, '=', $identity);
+        foreach ((array) $identifiers as $identifier) {
+            $query->orWhere($identifier, $identity);
         }
 
         return $query->firstOrFail();
@@ -115,7 +119,9 @@ class AssignRole extends BaseCommand
     /**
      * @param array $config
      *
-     * @throws RuntimeException
+     * @return void
+     *
+     * @throws \RuntimeException
      */
     protected function checkRoleModel(array $config)
     {

@@ -13,12 +13,18 @@ return [
         'name'     => 'name',
         'password' => 'password',
     ],
+
+    // Settings for "user:update-password" command.
     'password' => [
         'need_hash' => false,
     ],
+
+    // Settings for "user:sanitize" command.
     'sanitize' => [
         'scopes' => [],
     ],
+
+    // Settings for "user:assign-role" command.
     'update_password' => [
         'role_identifiers' => [
             'id',

@@ -38,9 +38,11 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->singleton('command.user.assign-role', function () {
             return new AssignRole();
         });
+
         $this->app->singleton('command.user.sanitize', function () {
             return new Sanitize();
         });
+
         $this->app->singleton('command.user.update-password', function () {
             return new UpdatePassword();
         });

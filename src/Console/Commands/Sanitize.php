@@ -5,9 +5,9 @@ declare(strict_types = 1);
 namespace McMatters\UserCommands\Console\Commands;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use RuntimeException;
+
+use function array_shift, is_array, preg_replace;
 
 /**
  * Class Sanitize
@@ -28,7 +28,8 @@ class Sanitize extends BaseCommand
 
     /**
      * @return void
-     * @throws RuntimeException
+     *
+     * @throws \RuntimeException
      */
     public function handle()
     {
@@ -40,14 +41,15 @@ class Sanitize extends BaseCommand
 
         $sanitized = 0;
 
-        $users->each(function (Model $user) use ($emailColumn, $domain, &$sanitized) {
+        /** @var \Illuminate\Database\Eloquent\Model $user */
+        foreach ($users as $user) {
             $email = $user->getAttribute($emailColumn);
             $newEmail = preg_replace('/@(.*)$/', "@{$domain}-$1", $email);
 
             $user->update([$emailColumn => $newEmail]);
 
             $sanitized++;
-        });
+        }
 
         $this->info("Successfully sanitized {$sanitized} emails");
     }
@@ -55,7 +57,7 @@ class Sanitize extends BaseCommand
     /**
      * @param array $config
      *
-     * @return Builder
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function getUsers(array $config): Builder
     {

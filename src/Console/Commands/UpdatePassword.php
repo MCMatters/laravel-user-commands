@@ -4,10 +4,9 @@ declare(strict_types = 1);
 
 namespace McMatters\UserCommands\Console\Commands;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
-use RuntimeException;
+
+use const false;
 
 /**
  * Class UpdatePassword
@@ -28,9 +27,10 @@ class UpdatePassword extends BaseCommand
 
     /**
      * @return void
-     * @throws ModelNotFoundException
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function handle()
     {
