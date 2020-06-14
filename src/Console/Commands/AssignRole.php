@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace McMatters\UserCommands\Console\Commands;
 
@@ -104,7 +104,11 @@ class AssignRole extends BaseCommand
 
         $identity = $this->argument('role');
         $roleModel = Arr::get($config, 'models.role');
-        $identifiers = Arr::get($config, 'update_password.role_identifiers', ['id']);
+        $identifiers = Arr::get(
+            $config,
+            'update_password.role_identifiers',
+            ['id']
+        );
 
         /** @var \Illuminate\Database\Eloquent\Builder $query */
         $query = $roleModel::query();
@@ -125,10 +129,11 @@ class AssignRole extends BaseCommand
      */
     protected function checkRoleModel(array $config)
     {
-        if (empty($config['models']['role']) ||
+        if (
+            empty($config['models']['role']) ||
             !class_exists($config['models']['role'])
         ) {
-            throw new RuntimeException('Please provide the "Role" model.');
+            throw new RuntimeException('Please provide the "Role" model');
         }
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 return [
-    'models'   => [
+    'models' => [
         'user' => App\Models\User::class,
         'role' => App\Models\Role::class,
     ],
-    'columns'  => [
-        'id'       => 'id',
-        'email'    => 'email',
-        'name'     => 'name',
+    'columns' => [
+        'id' => 'id',
+        'email' => 'email',
+        'name' => 'name',
         'password' => 'password',
     ],
 
@@ -30,6 +30,6 @@ return [
             'id',
             'name',
         ],
-        'attach_method' => 'attachRole'
+        'attach_method' => 'attachRole',
     ],
 ];

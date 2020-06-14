@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace McMatters\UserCommands\Console\Commands;
 
@@ -99,10 +99,11 @@ abstract class BaseCommand extends Command
      */
     protected function checkUserModel(array $config)
     {
-        if (empty($config['models']['user']) ||
+        if (
+            empty($config['models']['user']) ||
             !class_exists($config['models']['user'])
         ) {
-            throw new RuntimeException('Please provide the "User" model.');
+            throw new RuntimeException('Please provide the "User" model');
         }
     }
 }
